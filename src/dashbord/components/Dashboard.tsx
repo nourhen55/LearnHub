@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Filter, SortAsc, Grid, List } from 'lucide-react';
+import { Filter, Grid, List } from 'lucide-react';
 import { Course } from '../types';
 import { CourseCard } from './CourseCard';
 import { coursesData } from '../data/coursesData';

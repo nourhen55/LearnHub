@@ -1,28 +1,31 @@
-// src/models/users.ts
-
+// models/users.ts
 export default class User {
   uid: string;
   name: string;
   email: string;
-  password: string;
+  role: string;
+  password?: string;
   photoURL?: string;
-  createdAt?: Date;
+  createdAt: Date;
 
   constructor(
     uid: string,
     name: string,
     email: string,
-    photoURL: string,
+    role: string,
+    password: string | undefined,
+    photoURL: string | undefined,
     createdAt: Date,
-    password: string
   ) {
     this.uid = uid;
     this.name = name;
     this.email = email;
+    this.role = role;
+    this.password = password;
     this.photoURL = photoURL;
     this.createdAt = createdAt;
-    this.password = password;
   }
+
 
   displayInfo() {
     return `${this.name} (${this.email})`;

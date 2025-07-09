@@ -9,6 +9,7 @@ export async function saveUserToFirestore(user: User) {
     uid: user.uid,
     name: user.name,
     email: user.email,
+    role: user.role,
     photoURL: user.photoURL,
     createdAt: user.createdAt,
     password: user.password || "", // Par précaution
@@ -22,6 +23,7 @@ export async function newUserToFirestore(newUser: User) {
       uid: newUser.uid,
       name: newUser.name,
       email: newUser.email,
+      role: newUser.role,
       password: newUser.password,
       photoURL: newUser.photoURL || "",
       createdAt: new Date(),
@@ -56,6 +58,7 @@ export async function getUserFromFirestore(uid: string): Promise<User | null> {
       data.uid,
       data.name,
       data.email,
+      data.role,
       data.photoURL,
       data.createdAt.toDate(),
       data.password

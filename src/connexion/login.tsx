@@ -21,6 +21,7 @@ import User from "../models/users";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebase";
 import { newUserToFirestore,saveUserToFirestore, getUserFromFirestore } from "../services/userService";
+import { saveUserparam} from "../services/paramService";
 
 function Login() {
     const navigate = useNavigate();
@@ -30,23 +31,41 @@ const handleGoogleLogin = async () => {
     const result = await signInWithPopup(auth, provider);
     const firebaseUser = result.user;
 
-    const existingUser = await getUserFromFirestore(firebaseUser.uid);
+    // جلب المستخدم حسب uid من Firestore
+    let existingUser = await getUserFromFirestore(firebaseUser.uid);
 
     if (!existingUser) {
       const newUser = new User(
         firebaseUser.uid,
         firebaseUser.displayName || "",
         firebaseUser.email || "",
+        "user", // ✅ مرّر role بشكل مباشر
+        undefined, // لا كلمة مرور مع Google
         firebaseUser.photoURL || "",
-        new Date(),
-        "" // Aucun mot de passe avec Google
+        new Date()
       );
 
       await saveUserToFirestore(newUser);
+      await saveUserparam(newUser);
+      
+      existingUser = newUser; // ✅ بعد التسجيل، استعمله مباشرة
     }
 
-    sessionStorage.setItem("userId", firebaseUser.uid);
-    navigate("/dashboard");
+    // تخزين بيانات المستخدم في sessionStorage
+    sessionStorage.setItem("userId", existingUser.uid);
+    sessionStorage.setItem("userName", existingUser.name || "");
+    sessionStorage.setItem("userEmail", existingUser.email || "");
+
+    // ✅ استخدم role من existingUser وليس من firebaseUser
+    if (existingUser.role === "user") {
+      navigate("/dashboard");
+    } else if (existingUser.role === "professuer") {
+      navigate("/dashboardprof");
+    } else if (existingUser.role === "admine") {
+      navigate("/dashboardAdmine");
+    } else {
+      alert("❌ Rôle non reconnu.");
+    }
   } catch (error) {
     console.error("Erreur d'authentification :", error);
   }
@@ -99,7 +118,17 @@ const handleLogin = async () => {
 
     alert("✅ Connexion réussie !");
     sessionStorage.setItem("userId", userData.uid);
-    navigate("/dashboard");
+        sessionStorage.setItem("userName", userData.displayName || "");
+    sessionStorage.setItem("userEmail", userData.email || "");
+if (userData.role === "user") {
+  navigate("/dashboard");
+} else if (userData.role === "professuer") {
+  navigate("/dashboardprof");
+} else if (userData.role === "admine") {
+  navigate("/dashboardAdmine");
+} else {
+  alert("❌ Rôle non reconnu.");
+}
   } catch (error) {
     console.error("Erreur de connexion :", error);
     alert("❌ Une erreur est survenue pendant la connexion.");
@@ -183,23 +212,40 @@ const handleSubmit = async () => {
   }
 
   try {
-    const newUser = new User(
-      crypto.randomUUID(),
-      formData.firstName + " " + formData.lastName,
-      formData.email,
-      "", // Pas de photo au début
-      new Date(),
-      formData.password
-    );
+const newUser = new User(
+  crypto.randomUUID(),
+  formData.firstName + " " + formData.lastName,
+  formData.email,
+  "user",            // role
+  formData.password,
+  undefined,         // photoURL (ممكن تضيف حقل لو حبيت)
+  new Date()
+);
+
 
     await newUserToFirestore(newUser);
+    await saveUserparam(newUser);
     console.log("✅ Utilisateur enregistré :", newUser);
-     navigate("/dashboard");
+
+    sessionStorage.setItem("userId", newUser.uid);
+    sessionStorage.setItem("userName", newUser.name || "");
+    sessionStorage.setItem("userEmail", newUser.email || "");
+
+if (newUser.role === "user") {
+  navigate("/dashboard");
+} else if (newUser.role === "professuer") {
+  navigate("/dashboardprof");
+} else if (newUser.role === "admine") {
+  navigate("/dashboardAdmine");
+} else {
+  alert("❌ Rôle non reconnu.");
+}
   } catch (error) {
     console.error("❌ Erreur d'inscription :", error);
     alert("⚠️ Une erreur est survenue lors de l'inscription.");
   }
 };
+
 
   const renderRegisterForm = () => (
     <div className="space-y-6">

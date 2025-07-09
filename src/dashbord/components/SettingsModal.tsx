@@ -163,12 +163,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
         {/* Footer */}
         <div className="p-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={onClose}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors duration-200"
-          >
-            Enregistrer les paramètres
-          </button>
+ 
+
         </div>
       </div>
     </div>
