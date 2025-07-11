@@ -7,6 +7,7 @@ export default class User {
   password?: string;
   photoURL?: string;
   createdAt: Date;
+  status:string | undefined;
 
   constructor(
     uid: string,
@@ -16,6 +17,7 @@ export default class User {
     password: string | undefined,
     photoURL: string | undefined,
     createdAt: Date,
+      status:string | undefined,
   ) {
     this.uid = uid;
     this.name = name;
@@ -24,6 +26,8 @@ export default class User {
     this.password = password;
     this.photoURL = photoURL;
     this.createdAt = createdAt;
+    this.status=status ;
+
   }
 
 

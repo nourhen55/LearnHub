@@ -59,6 +59,7 @@ export async function getUserFromFirestore(uid: string): Promise<User | null> {
       data.name,
       data.email,
       data.role,
+      data.status,
       data.photoURL,
       data.createdAt.toDate(),
       data.password
