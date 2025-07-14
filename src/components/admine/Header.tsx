@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LogOut, User, Settings, Crown } from 'lucide-react';
+import { doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../../firebase'; // ajuste le chemin si besoin
 
 const Header: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -12,9 +14,23 @@ const Header: React.FC = () => {
     setEmail(storedEmail);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {  // <-- async ici
+    const currentUserId = sessionStorage.getItem("userId"); 
+
+    if (currentUserId) {
+      try {
+        const userRef = doc(db, "users", currentUserId);
+        await updateDoc(userRef, {
+          isOnline: false,
+          lastSeen: Timestamp.now()
+        });
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut de déconnexion :", error);
+      }
+    }
+    
     sessionStorage.clear();
-    window.location.href = '/'; // redirect vers la page login ou accueil
+    window.location.href = '/'; 
   };
 
   return (

@@ -41,8 +41,21 @@ export const UserMenu: React.FC<UserMenuProps> = ({ userProfile, currentLevel })
 
   const handleLogout = async () => {
     try {
+       const currentUserId = sessionStorage.getItem("userId"); 
+      
+          if (currentUserId) {
+            try {
+              const userRef = doc(db, "users", currentUserId);
+              await updateDoc(userRef, {
+                isOnline: false,
+                lastSeen: Timestamp.now()
+              });
+            } catch (error) {
+              console.error("Erreur lors de la mise à jour du statut de déconnexion :", error);
+            }
+          }
       console.log("Déconnecté !");
-      // navigate("/login");
+      navigate("/login");
     } catch (error) {
       console.error("Erreur lors de la déconnexion", error);
     }

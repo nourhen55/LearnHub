@@ -7,6 +7,7 @@ import ResetPassword from './connexion/reset-password'; // حرف D كبير
 import Dashbord from './dashbord/dashbord'; // حرف D كبير
 import ProfilPage from './dashbord/components/profil/profil'; // حرف D كبير
 import AdminDashboard from './components/admine/AdmineDashboard'; 
+import DashbordProf from './components/Professeur/dashbordProf/App'; 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/dashboard" element={<Dashbord />} />
         <Route path="/profil" element={<ProfilPage />} />
         <Route path="/dashboardAdmine" element={<AdminDashboard />} />
+        <Route path="/DashbordProf" element={<DashbordProf />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

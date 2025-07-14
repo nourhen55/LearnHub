@@ -36,13 +36,15 @@ const handleGoogleLogin = async () => {
 
     if (!existingUser) {
       const newUser = new User(
-        firebaseUser.uid,
-        firebaseUser.displayName || "",
-        firebaseUser.email || "",
-        "user", // ✅ مرّر role بشكل مباشر
-        undefined, // لا كلمة مرور مع Google
-        firebaseUser.photoURL || "",
-        new Date()
+        crypto.randomUUID(),
+    formData.firstName + " " + formData.lastName,
+    formData.email,
+    "user",             // rôle
+    formData.password,  // mot de passe
+    undefined,          // photoURL
+    new Date(),         // createdAt
+    true,               // ✅ isOnline ← مصحّحة
+    null                // ✅ lastSeen
       );
 
       await saveUserToFirestore(newUser);
@@ -59,8 +61,8 @@ const handleGoogleLogin = async () => {
     // ✅ استخدم role من existingUser وليس من firebaseUser
     if (existingUser.role === "user") {
       navigate("/dashboard");
-    } else if (existingUser.role === "professuer") {
-      navigate("/dashboardprof");
+    } else if (existingUser.role === "professeur") {
+      navigate("/DashbordProf");
     } else if (existingUser.role === "admine") {
       navigate("/dashboardAdmine");
     } else {
@@ -122,8 +124,8 @@ const handleLogin = async () => {
     sessionStorage.setItem("userEmail", userData.email || "");
 if (userData.role === "user") {
   navigate("/dashboard");
-} else if (userData.role === "professuer") {
-  navigate("/dashboardprof");
+} else if (userData.role === "professeur") {
+  navigate("/DashbordProf");
 } else if (userData.role === "admine") {
   navigate("/dashboardAdmine");
 } else {
@@ -211,16 +213,20 @@ const handleSubmit = async () => {
     return;
   }
 
-  try {
-const newUser = new User(
-  crypto.randomUUID(),
-  formData.firstName + " " + formData.lastName,
-  formData.email,
-  "user",            // role
-  formData.password,
-  undefined,         // photoURL (ممكن تضيف حقل لو حبيت)
-  new Date()
-);
+try {
+  const newUser = new User(
+    crypto.randomUUID(),
+    formData.firstName + " " + formData.lastName,
+    formData.email,
+    "user",             // rôle
+    formData.password,  // mot de passe
+    undefined,          // photoURL
+    new Date(),         // createdAt
+    true,               // ✅ isOnline ← مصحّحة
+    null                // ✅ lastSeen
+  );
+
+
 
 
     await newUserToFirestore(newUser);
@@ -233,7 +239,7 @@ const newUser = new User(
 
 if (newUser.role === "user") {
   navigate("/dashboard");
-} else if (newUser.role === "professuer") {
+} else if (newUser.role === "professeur") {
   navigate("/dashboardprof");
 } else if (newUser.role === "admine") {
   navigate("/dashboardAdmine");

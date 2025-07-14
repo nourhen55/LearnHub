@@ -44,7 +44,7 @@ const AdminDashboard: React.FC = () => {
     subject: '',
     department: '',
     hireDate: '',
-    status: 'active',
+    status: 'Actif',
     role: 'professeur'
   });
 
@@ -201,26 +201,47 @@ const AdminDashboard: React.FC = () => {
   const handleAddTeacher = () => {
     setShowAddModal(true);
   };
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmitNewTeacher = async () => {
-    await handleSaveTeacher(newTeacher);
-    setShowAddModal(false);
-    setNewTeacher({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      department: '',
-      hireDate: '',
-      status: 'active',
-      role: 'professeur'
-    });
-  };
+  const newErrors: { [key: string]: string } = {};
 
-  if (loading) {
-    return <div className="text-white p-8">Chargement des données...</div>;
+  if (!newTeacher.firstName.trim()) newErrors.firstName = 'Prénom requis';
+  if (!newTeacher.lastName.trim()) newErrors.lastName = 'Nom requis';
+  if (!newTeacher.email.trim()) newErrors.email = 'Email requis';
+  if (!newTeacher.phone.trim()) newErrors.phone = 'Téléphone requis';
+  if (!newTeacher.subject.trim()) newErrors.subject = 'Matière requise';
+  if (!newTeacher.department.trim()) newErrors.department = 'Département requis';
+  if (!newTeacher.hireDate.trim()) newErrors.hireDate = "Date d'embauche requise";
+
+  // Affiche les erreurs
+  setErrors(newErrors);
+
+  // Ne continue que si aucune erreur
+  if (Object.keys(newErrors).length > 0) {
+    return;
   }
+
+  // Si tout est OK, on sauvegarde
+  await handleSaveTeacher(newTeacher);
+  setShowAddModal(false);
+
+  // Réinitialisation du formulaire
+  setNewTeacher({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    department: '',
+    hireDate: '',
+    status: 'Actif',
+    role: 'professeur'
+  });
+
+  // Réinitialise aussi les erreurs
+  setErrors({});
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -404,78 +425,64 @@ const AdminDashboard: React.FC = () => {
 
                 {/* Modal d'ajout */}
                 {showAddModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-gray-800 text-white p-6 rounded-xl w-full max-w-md shadow-xl space-y-4 border border-gray-700">
-                      <h2 className="text-lg font-bold">Ajouter un Professeur</h2>
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div className="bg-gray-900 text-white p-8 rounded-2xl w-full max-w-lg shadow-2xl border border-gray-700 space-y-5 relative">
+    <h2 className="text-2xl font-bold text-center">🧑‍🏫 Ajouter un Professeur</h2>
 
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="text" 
-                        placeholder="Prénom"
-                        value={newTeacher.firstName}
-                        onChange={(e) => setNewTeacher({...newTeacher, firstName: e.target.value})}
-                      />
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="text" 
-                        placeholder="Nom"
-                        value={newTeacher.lastName}
-                        onChange={(e) => setNewTeacher({...newTeacher, lastName: e.target.value})}
-                      />
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="email" 
-                        placeholder="Email"
-                        value={newTeacher.email}
-                        onChange={(e) => setNewTeacher({...newTeacher, email: e.target.value})}
-                      />
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="text" 
-                        placeholder="Téléphone"
-                        value={newTeacher.phone}
-                        onChange={(e) => setNewTeacher({...newTeacher, phone: e.target.value})}
-                      />
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="text" 
-                        placeholder="Matière"
-                        value={newTeacher.subject}
-                        onChange={(e) => setNewTeacher({...newTeacher, subject: e.target.value})}
-                      />
-                      <select
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        value={newTeacher.department}
-                        onChange={(e) => setNewTeacher({...newTeacher, department: e.target.value})}
-                      >
-                        <option value="">Sélectionner un département</option>
-                        {departements.map(dept => (
-                          <option key={dept.id} value={dept.name}>{dept.name}</option>
-                        ))}
-                      </select>
-                      <input 
-                        className="w-full bg-gray-700 border border-gray-600 px-3 py-2 rounded text-white"
-                        type="date" 
-                        value={newTeacher.hireDate}
-                        onChange={(e) => setNewTeacher({...newTeacher, hireDate: e.target.value})}
-                      />
+    {[
+      { placeholder: 'Prénom', key: 'firstName', type: 'text' },
+      { placeholder: 'Nom', key: 'lastName', type: 'text' },
+      { placeholder: 'Email', key: 'email', type: 'email' },
+      { placeholder: 'Téléphone', key: 'phone', type: 'text' },
+      { placeholder: 'Matière', key: 'subject', type: 'text' },
+    ].map(({ placeholder, key, type }) => (
+      <input
+        key={key}
+        type={type}
+        placeholder={placeholder}
+        className="w-full bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-500 px-4 py-2 rounded-lg outline-none transition"
+        value={newTeacher[key as keyof typeof newTeacher]}
+        onChange={(e) => setNewTeacher({ ...newTeacher, [key]: e.target.value })}
+      />
+    ))}
 
-                      <div className="flex justify-end space-x-3 pt-2">
-                        <button
-                          onClick={handleSubmitNewTeacher}
-                          className="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg"
-                        >
-                          Ajouter
-                        </button>
-                        <button
-                          onClick={() => setShowAddModal(false)}
-                          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
-                        >
-                          Annuler
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+    <select
+      className="w-full bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-500 px-4 py-2 rounded-lg transition"
+      value={newTeacher.department}
+      onChange={(e) => setNewTeacher({ ...newTeacher, department: e.target.value })}
+    >
+      <option value="">📚 Sélectionner un département</option>
+      {departements.map((dept) => (
+        <option key={dept.id} value={dept.name}>
+          {dept.name}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="date"
+      className="w-full bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-cyan-500 px-4 py-2 rounded-lg transition"
+      value={newTeacher.hireDate}
+      onChange={(e) => setNewTeacher({ ...newTeacher, hireDate: e.target.value })}
+    />
+
+    <div className="flex justify-end space-x-3 pt-4">
+      <button
+        onClick={handleSubmitNewTeacher}
+        className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-lg transition"
+      >
+        Ajouter
+      </button>
+      <button
+        onClick={() => setShowAddModal(false)}
+        className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition"
+      >
+        Annuler
+      </button>
+    </div>
+  </div>
+</div>
+
                 )}
 
                 <TeacherTable

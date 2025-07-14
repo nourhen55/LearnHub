@@ -1,4 +1,5 @@
 // models/users.ts
+
 export default class User {
   uid: string;
   name: string;
@@ -7,7 +8,8 @@ export default class User {
   password?: string;
   photoURL?: string;
   createdAt: Date;
-  status:string | undefined;
+  isOnline: boolean;
+  lastSeen: Date | null;
 
   constructor(
     uid: string,
@@ -17,7 +19,8 @@ export default class User {
     password: string | undefined,
     photoURL: string | undefined,
     createdAt: Date,
-      status:string | undefined,
+    isOnline: boolean = true,
+    lastSeen: Date | null = null
   ) {
     this.uid = uid;
     this.name = name;
@@ -26,10 +29,9 @@ export default class User {
     this.password = password;
     this.photoURL = photoURL;
     this.createdAt = createdAt;
-    this.status=status ;
-
+    this.isOnline = isOnline;
+    this.lastSeen = lastSeen;
   }
-
 
   displayInfo() {
     return `${this.name} (${this.email})`;
