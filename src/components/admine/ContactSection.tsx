@@ -14,9 +14,8 @@ import {
 } from 'firebase/firestore';
 import {
   Send, Search, ArrowLeft, Check, CheckCheck, Clock, 
-  Phone, Video, MoreHorizontal, Paperclip, Smile,
-  Circle, Users, MessageCircle, Info, Settings,
-  Image, File, Download, Eye, Calendar
+  Phone, Video, MoreHorizontal, Paperclip, Smile,Users, MessageCircle, Info,
+  Image, File, Download, Calendar
 } from 'lucide-react';
 
 interface Teacher {
@@ -50,7 +49,7 @@ interface Message {
   readAt?: Date;
 }
 
-const CURRENT_USER_ID = 'Admine';
+const CURRENT_USER_ID = sessionStorage.getItem('userId');
 
 const ContactSection: React.FC = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -184,7 +183,7 @@ const ContactSection: React.FC = () => {
     if (newMessage.trim() && selectedTeacher) {
       const now = new Date();
       const messageToSend = {
-        senderId: CURRENT_USER_ID,
+        senderId: sessionStorage.getItem('userId'),
         receiverId: selectedTeacher.id,
         content: newMessage.trim(),
         timestamp: Timestamp.fromDate(now),
